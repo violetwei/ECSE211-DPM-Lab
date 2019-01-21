@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab1;
+package ca.mcgill.ecse211.wallfollowing;
 
 import ca.mcgill.ecse211.lab1.UltrasonicController;
 import ca.mcgill.ecse211.lab1.WallFollowingLab;
