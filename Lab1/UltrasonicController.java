@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.lab1;
+package ca.mcgill.ecse211.wallfollowing;
 
 //interface for the ultrasonic controller
 /**
