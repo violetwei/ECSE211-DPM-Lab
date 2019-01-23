@@ -1,5 +1,9 @@
 /**
  * This class is meant as a skeleton for the odometer class to be used.
+ * package ca.mcgill.ecse211.odometer;
+
+/**
+ * This class is meant as a skeleton for the odometer class to be used.
  * 
  * @author Rodrigo Silva
  * @author Dirk Dubois
@@ -8,7 +12,6 @@
  * @author Michael Smith
  */
 
-package ca.mcgill.ecse211.odometer;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
@@ -29,17 +32,17 @@ public class Odometer extends OdometerData implements Runnable {
 
   private double displacementLeft;
   private double displacementRight;
-
-  private double X; 
-  private double Y;
-
+  
+  
+  
+  
   private final double TRACK;
   private final double WHEEL_RAD;
 
   private double[] position;
 
 
-  private static final long ODOMETER_PERIOD = 25; // odometer update period in ms
+  private static final long ODOMETER_PERIOD = 100; // odometer update period in ms
 
   /**
    * This is the default constructor of this class. It initiates all motors and variables once.It
@@ -59,10 +62,10 @@ public class Odometer extends OdometerData implements Runnable {
     // Reset the values of x, y and z to 0
     odoData.setXYT(0, 0, 0);
 
-    this.leftMotorTachoCount = 0;
-    this.rightMotorTachoCount = 0;
+    this.lastTachoLeft = 0;
+    this.lastTachoRight = 0;
     this.Theta = 0;
-
+    
     this.TRACK = TRACK;
     this.WHEEL_RAD = WHEEL_RAD;
 
@@ -112,36 +115,43 @@ public class Odometer extends OdometerData implements Runnable {
 
     while (true) {
       updateStart = System.currentTimeMillis();
-
-      //get the current tacho count
+      
       nowLeftMotorTachoCount = leftMotor.getTachoCount();
       nowRightMotorTachoCount = rightMotor.getTachoCount();
+ 
 
-      // TODO Calculate new robot position based on tachometer counts
       double displacementX, displacementY, displacementTheta;
       double angle;
-      double deltaD;
+      double displacementChange;
 
       // Calculate the displacement of the left motor and right motor in centimeters
       displacementLeft = Math.PI*WHEEL_RAD*(nowLeftMotorTachoCount - lastTachoLeft)/180;
       displacementRight = Math.PI*WHEEL_RAD*(nowRightMotorTachoCount - lastTachoRight)/180;
 
-      // Update the Tacho count, save tacho counts for next iteration
+      // Update the Tacho count
       lastTachoLeft = nowLeftMotorTachoCount;
       lastTachoRight = nowRightMotorTachoCount;
 
       // Calculate angle
-      deltaD = 0.5*(displacementLeft + displacementRight); //compute vehicle displacement
+      displacementChange = 0.5*(displacementLeft + displacementRight);
       angle = (displacementLeft - displacementRight) / TRACK;
       Theta += angle;
 
       //Change in displacement and angle
-      displacementX = deltaD*Math.sin(Theta); //compute X component of displacement     
-      displacementY = deltaD*Math.cos(Theta); //compute Y component of displacement
+      displacementX = displacementChange*Math.sin(Theta);
+      displacementY = displacementChange*Math.cos(Theta);
       displacementTheta = angle*180/Math.PI;
       
+      position = odoData.getXYT();
+      
+
+      position[0]+= displacementX;
+      position[1]+= displacementY;
+      position[2]+=displacementTheta;
+      
+      
       // TODO Update odometer values with new calculated values
-      odo.update(0.5, 1.8, 20.1);
+      odo.update(position[0], position[1], position[2]);
 
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
@@ -156,3 +166,4 @@ public class Odometer extends OdometerData implements Runnable {
   }
 
 }
+
