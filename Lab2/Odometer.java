@@ -126,18 +126,18 @@ public class Odometer extends OdometerData implements Runnable {
       displacementLeft = Math.PI*WHEEL_RAD*(nowLeftMotorTachoCount - lastTachoLeft)/180;
       displacementRight = Math.PI*WHEEL_RAD*(nowRightMotorTachoCount - lastTachoRight)/180;
 
-      // Update the Tacho count
+      // Update the Tacho count, save tacho counts for next iteration
       lastTachoLeft = nowLeftMotorTachoCount;
       lastTachoRight = nowRightMotorTachoCount;
 
       // Calculate angle
-      deltaD = 0.5*(displacementLeft + displacementRight);
+      deltaD = 0.5*(displacementLeft + displacementRight); //compute vehicle displacement
       angle = (displacementLeft - displacementRight) / TRACK;
       Theta += angle;
 
       //Change in displacement and angle
-      displacementX = deltaD*Math.sin(Theta);
-      displacementY = deltaD*Math.cos(Theta);
+      displacementX = deltaD*Math.sin(Theta); //compute X component of displacement     
+      displacementY = deltaD*Math.cos(Theta); //compute Y component of displacement
       displacementTheta = angle*180/Math.PI;
       
       // TODO Update odometer values with new calculated values
