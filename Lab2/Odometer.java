@@ -120,7 +120,7 @@ public class Odometer extends OdometerData implements Runnable {
       // TODO Calculate new robot position based on tachometer counts
       double displacementX, displacementY, displacementTheta;
       double angle;
-      double displacementChange;
+      double deltaD;
 
       // Calculate the displacement of the left motor and right motor in centimeters
       displacementLeft = Math.PI*WHEEL_RAD*(nowLeftMotorTachoCount - lastTachoLeft)/180;
@@ -131,13 +131,13 @@ public class Odometer extends OdometerData implements Runnable {
       lastTachoRight = nowRightMotorTachoCount;
 
       // Calculate angle
-      dDisplacementChange = 0.5*(displacementLeft + displacementRight);
+      deltaD = 0.5*(displacementLeft + displacementRight);
       angle = (displacementLeft - displacementRight) / TRACK;
       Theta += angle;
 
       //Change in displacement and angle
-      displacementX = displacementChange*Math.sin(Theta);
-      displacementY = displacementChange*Math.cos(Theta);
+      displacementX = deltaD*Math.sin(Theta);
+      displacementY = deltaD*Math.cos(Theta);
       displacementTheta = angle*180/Math.PI;
       
       // TODO Update odometer values with new calculated values
