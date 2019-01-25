@@ -1,5 +1,7 @@
 package ca.mcgill.ecse211.odometer;
 
+
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,9 +19,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class OdometerData {
 
   // Position parameters
-  private volatile double x; // x-axis position
-  private volatile double y; // y-axis position
-  private volatile double theta; // Head angle
+  private volatile double x = -100; // x-axis position
+  private volatile double y = -100; // y-axis position
+  private volatile double theta = 0; // Head angle
 
   // Class control variables
   private volatile static int numberOfIntances = 0; // Number of OdometerData
@@ -46,8 +48,8 @@ public class OdometerData {
    * instance of this class is ever created.
    */
   protected OdometerData() {
-    this.x = 0;
-    this.y = 0;
+    this.x = -100;
+    this.y = -100;
     this.theta = 0;
   }
 
@@ -206,7 +208,15 @@ public class OdometerData {
                                 // done reseting
     } finally {
       lock.unlock();
-    }
+    } 
   }
+  
+
+
+	public double getT() {
+		// TODO Auto-generated method stub
+		return theta;
+}
 
 }
+
