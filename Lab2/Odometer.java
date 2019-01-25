@@ -1,13 +1,16 @@
 package ca.mcgill.ecse211.odometer;
 
 /**
- * This class is meant as a skeleton for the odometer class to be used.
+ * This class is a skeleton class for building an odometer and runs in a thread.
  * 
  * @author Rodrigo Silva
  * @author Dirk Dubois
  * @author Derek Yu
  * @author Karim El-Baba
  * @author Michael Smith
+ *
+ * @author Violet Wei
+ * @author Maxime Bourassa
  */
 
 
@@ -31,9 +34,7 @@ public class Odometer extends OdometerData implements Runnable {
   private double displacementLeft;
   private double displacementRight;
   
-  
-  
-  
+	
   private final double TRACK;
   private final double WHEEL_RAD;
 
@@ -42,12 +43,16 @@ public class Odometer extends OdometerData implements Runnable {
 
   private static final long ODOMETER_PERIOD = 50; // odometer update period in ms
 
+	
   /**
-   * This is the default constructor of this class. It initiates all motors and variables once.It
-   * cannot be accessed externally.
+   * This is the default constructor of this class. It initiates all motors and variables once.
+   * It cannot be accessed externally.
    * 
    * @param leftMotor
    * @param rightMotor
+   * @param lastTachoLeft
+   * @param lastTachoRight
+   * @param Theta
    * @throws OdometerExceptions
    */
   private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
@@ -90,8 +95,9 @@ public class Odometer extends OdometerData implements Runnable {
 
   /**
    * This class is meant to return the existing Odometer Object. It is meant to be used only if an
-   * odometer object has been created
+   * odometer object has been created.
    * 
+   * @throws OdometerExceptions
    * @return error if no previous odometer exists
    */
   public synchronized static Odometer getOdometer() throws OdometerExceptions {
@@ -104,9 +110,12 @@ public class Odometer extends OdometerData implements Runnable {
   }
 
   /**
-   * This method is where the logic for the odometer will run. Use the methods provided from the
-   * OdometerData class to implement the odometer.
+   * This method is where the logic for the odometer will run. 
+   * Use the methods provided from the OdometerData class to implement the odometer.
+   *
+   * @return void
    */
+	
   // run method (required for Thread)
   public void run() {
     long updateStart, updateEnd;
@@ -114,7 +123,7 @@ public class Odometer extends OdometerData implements Runnable {
     while (true) {
       updateStart = System.currentTimeMillis();
       
-      nowLeftMotorTachoCount = leftMotor.getTachoCount();
+      nowLeftMotorTachoCount = leftMotor.getTachoCount(); // get tacho counts
       nowRightMotorTachoCount = rightMotor.getTachoCount();
  
 
@@ -123,21 +132,21 @@ public class Odometer extends OdometerData implements Runnable {
       double displacementChange;
 
       // Calculate the displacement of the left motor and right motor in centimeters
-      displacementLeft = Math.PI*WHEEL_RAD*(nowLeftMotorTachoCount - lastTachoLeft)/180;
+      displacementLeft = Math.PI*WHEEL_RAD*(nowLeftMotorTachoCount - lastTachoLeft)/180;  // compute wheel displacements
       displacementRight = Math.PI*WHEEL_RAD*(nowRightMotorTachoCount - lastTachoRight)/180;
 
       // Update the Tacho count
-      lastTachoLeft = nowLeftMotorTachoCount;
+      lastTachoLeft = nowLeftMotorTachoCount; // save tacho counts for next iteration
       lastTachoRight = nowRightMotorTachoCount;
 
       // Calculate angle
-      displacementChange = 0.5*(displacementLeft + displacementRight);
-      angle = (displacementLeft - displacementRight) / TRACK;
+      displacementChange = 0.5*(displacementLeft + displacementRight); // compute vehicle displacement
+      angle = (displacementLeft - displacementRight) / TRACK; // compute change in heading
       Theta += angle;
 
       //Change in displacement and angle
-      displacementX = displacementChange*Math.sin(Theta);
-      displacementY = displacementChange*Math.cos(Theta);
+      displacementX = displacementChange*Math.sin(Theta); // compute X component of displacement
+      displacementY = displacementChange*Math.cos(Theta); // compute X component of displacement      
       displacementTheta = angle*180/Math.PI;
       
       position = odoData.getXYT();
@@ -162,14 +171,16 @@ public class Odometer extends OdometerData implements Runnable {
       }
     }
   }
-
-  public double[] getOdoData() {
-	  return odoData.getXYT();
-  }
   
+  /**
+   * This method returns the WHEEL_RAD constant
+   *
+   * @return double
+   */
   public double getRad() {
 	  return WHEEL_RAD;
   }
+	
 }
 
 
