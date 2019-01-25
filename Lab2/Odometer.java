@@ -1,6 +1,4 @@
-/**
- * This class is meant as a skeleton for the odometer class to be used.
- * package ca.mcgill.ecse211.odometer;
+package ca.mcgill.ecse211.odometer;
 
 /**
  * This class is meant as a skeleton for the odometer class to be used.
@@ -42,7 +40,7 @@ public class Odometer extends OdometerData implements Runnable {
   private double[] position;
 
 
-  private static final long ODOMETER_PERIOD = 100; // odometer update period in ms
+  private static final long ODOMETER_PERIOD = 50; // odometer update period in ms
 
   /**
    * This is the default constructor of this class. It initiates all motors and variables once.It
@@ -165,5 +163,14 @@ public class Odometer extends OdometerData implements Runnable {
     }
   }
 
+  public double[] getOdoData() {
+	  return odoData.getXYT();
+  }
+  
+  public double getRad() {
+	  return WHEEL_RAD;
+  }
 }
+
+
 
