@@ -103,54 +103,7 @@ public class OdometryCorrection extends SquareDriver implements Runnable {
     	  } else {
     		  odometer.setX(increments.get(counter));
     	  }
-    	 /* position = odometer.getXYT();
-    	  
-    	  if (counter == 1 || counter == 2) {
-    		  displayY+= SquareDriver.getTS(); 
-    		  //posY = SquareDriver.getTS() - position[1];
-    		  
-    		 // odometer.getleftMotor().rotate(SquareDriver.getDistance(odometer.getRad(), posY), true);
-    	     // odometer.getrightMotor().rotate(SquareDriver.getDistance(odometer.getRad(), posY), false);
-    	      odometer.setY(displayY); 
-    	      
-    	      
-    		  
-    	  } else if(counter > 3 && counter <= 5) {
-    		  displayX+= SquareDriver.getTS();
-    		  posX = counter%3 * SquareDriver.getTS() - position[0];
-    		  
-    		  
-    	      odometer.setX(displayX); 
-    		  
-    	  } else if (counter == 7  || counter <= 8) {
-    		  displayY-= SquareDriver.getTS();
-    		  posY = position[1] -  counter%3 * SquareDriver.getTS();
-    		  
-    		  //odometer.getleftMotor().rotate(SquareDriver.getDistance(odometer.getRad(), posY), true);
-    	      //odometer.getrightMotor().rotate(SquareDriver.getDistance(odometer.getRad(), posY), false);
-    	      odometer.setY(displayY); 
-    	      
-    	  } else if (counter > 9){
-    		  displayX-= SquareDriver.getTS();
-    		  posX = position[0] - counter%3 * SquareDriver.getTS();
-    		  
-    		 // odometer.getleftMotor().rotate(SquareDriver.getDistance(odometer.getRad(), posX), true);
-    	      //odometer.getrightMotor().rotate(SquareDriver.getDistance(odometer.getRad(), posX), false);
-    	      odometer.setX(displayX); 
-    	      
     	 
-    		  
-    	  } else if(counter ==0){
-    		  odometer.setY(0); 
-    		  
-    	  } else if (counter ==3) {
-    		  odometer.setX(0);
-    	  } else if (counter ==6) {
-    		  odometer.setY(displayY);
-    	  } else if (counter ==9) {
-    		  odometer.setX(displayX);
-    	  }
-    	 //System.out.println(counter);*/
     	 counter++;
     	  
       }
