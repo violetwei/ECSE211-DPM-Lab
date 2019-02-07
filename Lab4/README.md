@@ -1,12 +1,12 @@
-## Lab4 - Localization
+# Lab4 - Localization
 
-### Design objectives
+## Design objectives
 
 Design a system to localize the robot using ultrasonic and light sensors, where the robot should move to a known starting position
 
 Devaluate the design and determine how well the system localizes the robot
 
-### Design requirements
+## Design requirements
 
 The system must localize the robot to the origin of the tiles grid system.
 
