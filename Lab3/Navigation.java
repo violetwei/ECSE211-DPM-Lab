@@ -297,7 +297,12 @@ public class Navigation extends Thread {
   public int readUSDistance() {
     return this.distance;
   }
-
+  
+  void stopBothMotors() {
+    leftMotor.setSpeed(0);
+    rightMotor.setSpeed(0);
+  }
+  
   /**
    * Simple filter to remove false far distances given by the sensor
    * Same as the one used in lab 1
