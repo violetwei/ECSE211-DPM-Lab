@@ -1,5 +1,17 @@
 # Lab4 - Localization
 
+## Introduction
+When placing the robot on the field, human error plays a role in the accuracy of the odometer
+
+It is desirable to standardize (and, preferably, reduce) this error by having the robot orient itself automatically, given reasonable assumptions about its initial position
+
+This process of autonomous orientation is called localization
+
+## Light Sensor Localizaton
+The light sensor should be located away from the center of rotation of the robot
+
+It will be used to detect grid lines' positions relative to the robot
+
 ## Design objectives
 
 Design a system to localize the robot using ultrasonic and light sensors, where the robot should move to a known starting position
