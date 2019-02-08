@@ -35,7 +35,8 @@ package ca.mcgill.ecse211.lab4;
     public static final double WHEEL_RAD = 2.1;
     public static final double TRACK = 11.2;
     public static final int SPEED = 100;
-
+    public static final double SQUARE_LENGTH = 30.48;
+    
     //Parameters to be accessed directly in the navigation class
     public static int NUMPOINTS = 4;
     public static boolean clockwise = false;
