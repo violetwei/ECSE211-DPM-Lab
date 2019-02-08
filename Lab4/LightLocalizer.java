@@ -25,7 +25,7 @@ public class LightLocalizer extends Thread{
 
   private static final int THRESHOLD = 25;
   private static final int MIN_DATA_THRESHOLD = 5;
-  private static final double DISTANCE_FROM_CENTER = 9.4;
+  private static final double DISTANCE_FROM_CENTER = 9.6;
 
   private int lastBeepCounter = 0; // Holds the counter that counts iterations since last beep
 
