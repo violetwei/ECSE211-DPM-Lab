@@ -52,7 +52,7 @@ public class Odometer extends Thread {
     
     
     
-    leftMotor .resetTachoCount();
+    leftMotor.resetTachoCount();
     rightMotor.resetTachoCount();
     lastTachoL=leftMotor.getTachoCount();
     lastTachoR=rightMotor.getTachoCount();
@@ -62,7 +62,7 @@ public class Odometer extends Thread {
 
       //odometer code adapted from myCourses example
       currentTachoL = leftMotor.getTachoCount();
-      currentTachoR = leftMotor.getTachoCount();
+      currentTachoR = rightMotor.getTachoCount();
 
       distL = Math.PI*WHEEL_RAD*(currentTachoL - lastTachoL)/180;
       distR = Math.PI*WHEEL_RAD*(currentTachoR - lastTachoR)/180;
@@ -239,5 +239,7 @@ public class Odometer extends Thread {
     return result;
   }
 }
+
+
 
 
