@@ -2,6 +2,10 @@ package ca.mcgill.ecse211.lab4;
 
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import static ca.mcgill.ecse211.lab4.Lab4.leftMotor;
+import static ca.mcgill.ecse211.lab4.Lab4.rightMotor;
+import static ca.mcgill.ecse211.lab4.Lab4.WHEEL_RAD;
+import static ca.mcgill.ecse211.lab4.Lab4.TRACK;
 
   /**
    * Class used to test the wheel radius and track constants to improve the accuracy of our odometer
@@ -13,10 +17,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
   public class TestClass {
     //constant
     private static int SPEED = 100;
-    private static final EV3LargeRegulatedMotor LEFTMOTOR = Lab4.getLeftMotor();
-    private static final EV3LargeRegulatedMotor RIGHTMOTOR = Lab4.getRightMotor();
-    private static final double TRACK = Lab4.getTrack();
-    private static final double WHEEL_RAD = Lab4.getWR();
+    
     private static final double PI = Math.PI;
 
     
@@ -29,7 +30,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
       // TODO Auto-generated method stub
       double angle = 2 * Math.PI;
 
-      for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {LEFTMOTOR, RIGHTMOTOR}) {
+      for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {leftMotor, rightMotor}) {
         motor.stop();
         
       }
@@ -41,10 +42,10 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
         // There is nothing to be done here
       }
 
-      LEFTMOTOR.setSpeed(SPEED);
-      RIGHTMOTOR.setSpeed(SPEED);
-      LEFTMOTOR.rotate(convertAngle( angle), true); //returns immediately
-      RIGHTMOTOR.rotate(-convertAngle(angle), false); //wait to return
+      leftMotor.setSpeed(SPEED);
+      rightMotor.setSpeed(SPEED);
+      leftMotor.rotate(convertAngle( angle), true); //returns immediately
+      rightMotor.rotate(-convertAngle(angle), false); //wait to return
     }
 
     /**
@@ -56,7 +57,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
       double distance = 2 * 30.48;
 
-      for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {LEFTMOTOR, RIGHTMOTOR}) {
+      for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] {leftMotor, rightMotor}) {
         motor.stop();
       }
 
@@ -67,10 +68,10 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
         // There is nothing to be done here
       }
 
-      LEFTMOTOR.setSpeed(SPEED);
-      RIGHTMOTOR.setSpeed(SPEED);
-      LEFTMOTOR.rotate(convertDistance(distance), true); //returns immediately
-      RIGHTMOTOR.rotate(convertDistance(distance), false); //wait to return
+      leftMotor.setSpeed(SPEED);
+      rightMotor.setSpeed(SPEED);
+      leftMotor.rotate(convertDistance(distance), true); //returns immediately
+      rightMotor.rotate(convertDistance(distance), false); //wait to return
     }
 
     /**
@@ -92,3 +93,4 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
     }
   
 }
+
