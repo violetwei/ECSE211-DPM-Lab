@@ -4,14 +4,12 @@ package ca.mcgill.ecse211.lab4;
 
 import static ca.mcgill.ecse211.lab4.Lab4.*;
 import lejos.hardware.Sound;
-import lejos.robotics.SampleProvider;
+
 
   public class UltrasonicLocalizer extends Thread {
       
 
-      private Odometer odo;
-      private SampleProvider usSensor;
-      private float[] usData;
+      
       private LocalizationType locType;
       
       
@@ -27,10 +25,9 @@ import lejos.robotics.SampleProvider;
       private float lastDistance;
       
       public UltrasonicLocalizer(LocalizationType locType) {
-
           this.locType = locType;
-          
       }
+      
       public void run() {
         
           double firstangle = 0;
@@ -41,7 +38,7 @@ import lejos.robotics.SampleProvider;
           
           if(locType == LocalizationType.FALLING_EDGE) {
               
-            setSpeeds();
+            setSpeeds(SPEED);
             
              
               
@@ -56,11 +53,11 @@ import lejos.robotics.SampleProvider;
               while (true) {
                 turnClockwise();
                 if (!noiseZone && getFilteredData() <= WALL_DISTANCE + MARGIN_DISTANCE) {
-                  firstangle = odo.getTheta();
+                  firstangle = odometer.getTheta();
                   noiseZone = true;
                   Sound.beep();
               } else if ( getFilteredData() >= WALL_DISTANCE - MARGIN_DISTANCE && noiseZone){
-                  firstangle2 = odo.getTheta();
+                  firstangle2 = odometer.getTheta();
                   Sound.beep();
                   
                   
@@ -74,7 +71,7 @@ import lejos.robotics.SampleProvider;
               if(firstangle2!=0) {
                 firstangle = (firstangle+firstangle2)/2.0;
               } else if(firstangle == 0) {
-                firstangle = odo.getTheta();
+                firstangle = odometer.getTheta();
               }
               
               // switch direction and wait until it sees no wall
@@ -90,11 +87,11 @@ import lejos.robotics.SampleProvider;
               while (true) {
                 turnAnticlockwise();
                 if (!noiseZone && getFilteredData() <= WALL_DISTANCE + MARGIN_DISTANCE) {
-                  secondangle = odo.getTheta();
+                  secondangle = odometer.getTheta();
                   noiseZone = true;
                   Sound.beep();
               } else if ( getFilteredData() >= WALL_DISTANCE - MARGIN_DISTANCE && noiseZone){
-                  secondangle2 = odo.getTheta();
+                  secondangle2 = odometer.getTheta();
                   Sound.beep();
               }else if(noiseZone) {
                 noiseZone = false;
@@ -107,7 +104,7 @@ import lejos.robotics.SampleProvider;
               if(secondangle2!=0) {
                 secondangle = (secondangle+secondangle2)/2.0;
               } else if(secondangle == 0) {
-                secondangle = odo.getTheta();
+                secondangle = odometer.getTheta();
               }
               
               rightMotor.stop(true);
@@ -123,16 +120,17 @@ import lejos.robotics.SampleProvider;
 
               
               turnTo(ZeroPoint);
+              
               System.out.println("\n\n\n"+(int)firstangle+" "+(int)secondangle+" "+(int)averageAngle);
               System.out.println((int)firstangle2+" "+(int)secondangle2);
               
-              odo.setPosition(new double [] {0.0, 0.0, 0}, new boolean [] {true, true, true});
+              //odometer.setPosition(new double [] {0.0, 0.0, 0}, new boolean [] {true, true, true});
       
               
           } else {
             lastDistance = 255;
 
-            setSpeeds();
+            setSpeeds(SPEED);
             
              
               
@@ -147,11 +145,11 @@ import lejos.robotics.SampleProvider;
               while (true) {
                 turnClockwise();
                 if (!noiseZone && getData() >= WALL_DISTANCE - MARGIN_DISTANCE ) {
-                  firstangle = odo.getTheta();
+                  firstangle = odometer.getTheta();
                   noiseZone = true;
                   
               } else if ( getData() <= WALL_DISTANCE + MARGIN_DISTANCE && noiseZone){
-                  firstangle2 = odo.getTheta();
+                  firstangle2 = odometer.getTheta();
                   
               } else if(noiseZone) {
                 noiseZone = false;
@@ -163,7 +161,7 @@ import lejos.robotics.SampleProvider;
               if(firstangle2!=0) {
                 firstangle = (firstangle+firstangle2)/2.0;
               } else if(firstangle == 0) {
-                firstangle = odo.getTheta();
+                firstangle = odometer.getTheta();
               }
               
               // switch direction and wait until it sees a wall
@@ -182,11 +180,11 @@ import lejos.robotics.SampleProvider;
               while (true) {
                 turnAnticlockwise();
                 if (!noiseZone && getData() >= WALL_DISTANCE - MARGIN_DISTANCE) {
-                  secondangle = odo.getTheta();
+                  secondangle = odometer.getTheta();
                   noiseZone = true;
                   
               } else if ( getData() <= WALL_DISTANCE + MARGIN_DISTANCE && noiseZone){
-                  secondangle2 = odo.getTheta();
+                  secondangle2 = odometer.getTheta();
                   
               }else if(noiseZone) {
                 noiseZone = false;
@@ -199,7 +197,7 @@ import lejos.robotics.SampleProvider;
               if(secondangle2!=0) {
                 secondangle = (secondangle+secondangle2)/2.0;
               } else if(secondangle == 0) {
-                secondangle = odo.getTheta();
+                secondangle = odometer.getTheta();
               }
               
               rightMotor.stop(true);
@@ -218,16 +216,16 @@ import lejos.robotics.SampleProvider;
               System.out.println("\n\n\n"+(int)firstangle+" "+(int)secondangle+" "+(int)averageAngle);
               System.out.println((int)firstangle2+" "+(int)secondangle2);
               
-              odo.setPosition(new double [] {0.0, 0.0, 0}, new boolean [] {true, true, true});
+              //odometer.setPosition(new double [] {0.0, 0.0, 0}, new boolean [] {true, true, true});
       
             }
               
           
       }
       
-      private void setSpeeds() {
-        leftMotor.setSpeed(SPEED);
-        rightMotor.setSpeed(SPEED);
+      private void setSpeeds(int speed) {
+        leftMotor.setSpeed(speed);
+        rightMotor.setSpeed(speed);
       }
       
       private void turnClockwise() {
@@ -328,4 +326,6 @@ import lejos.robotics.SampleProvider;
 
     }
   
+
+
 
