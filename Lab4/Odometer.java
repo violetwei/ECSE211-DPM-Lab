@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.lab4;
 
-
+import static ca.mcgill.ecse211.lab4.Lab4.*;
 /** 
  * Class used to keep track of the distance the robot traveled through wheel rotations
  * It is a combination of both the Odometer and the OdometerData class from lab 2
@@ -26,10 +26,6 @@ public class Odometer extends Thread {
   // lock object for mutual exclusion
   private Object lock;
 
-  //Wheel Radius and Wheel Distance from Lab 3 main class
-  public static final double WR = Lab4.getWR();
-  public static final double WD = Lab4.getTrack();
-  public static final double PI = Math.PI;
 
   /**
    * Constructor of the class 
@@ -54,31 +50,33 @@ public class Odometer extends Thread {
     int currentTachoL, currentTachoR, lastTachoL, lastTachoR;
     double distL, distR, dDistance, dTheta, dX, dY;
     
-    Lab4.getLeftMotor().resetTachoCount();
-    Lab4.getRightMotor().resetTachoCount();
-    lastTachoL=Lab4.getLeftMotor().getTachoCount();
-    lastTachoR=Lab4.getRightMotor().getTachoCount();
+    
+    
+    leftMotor .resetTachoCount();
+    rightMotor.resetTachoCount();
+    lastTachoL=leftMotor.getTachoCount();
+    lastTachoR=rightMotor.getTachoCount();
 
     while (true) {
       updateStart = System.currentTimeMillis();
 
       //odometer code adapted from myCourses example
-      currentTachoL = Lab4.getLeftMotor().getTachoCount();
-      currentTachoR = Lab4.getRightMotor().getTachoCount();
+      currentTachoL = leftMotor.getTachoCount();
+      currentTachoR = leftMotor.getTachoCount();
 
-      distL = PI*WR*(currentTachoL - lastTachoL)/180;
-      distR = PI*WR*(currentTachoR - lastTachoR)/180;
+      distL = Math.PI*WHEEL_RAD*(currentTachoL - lastTachoL)/180;
+      distR = Math.PI*WHEEL_RAD*(currentTachoR - lastTachoR)/180;
 
       lastTachoL=currentTachoL;                             // save the tacho counts for next iteration of the loop
       lastTachoR=currentTachoR;
 
       dDistance = 0.5*(distL+distR);                            // distance traveled by the robot
-      dTheta = (distL-distR)/WD;                                // compute change in angle of the robot
-      dX = dDistance * Math.sin(theta);                     // X component of displacement
-      dY = dDistance * Math.cos(theta);                     // Y component of displacement
+      dTheta = (distL-distR)/TRACK*180/Math.PI;                                // compute change in angle of the robot
+      dX = dDistance * Math.sin(theta*Math.PI/180);                     // X component of displacement
+      dY = dDistance * Math.cos(theta*Math.PI/180);                     // Y component of displacement
       synchronized (lock) {
         //only place these variables are updated (x,y and theta)
-        theta = (theta + (360 + dTheta) % 360) % 360; //keeps the angle within 360 degrees
+        theta = (theta + (360 + dTheta) % (360)) % (360); //keeps the angle within 360 degrees
         x = x + dX;                                         
         y = y + dY; 
       }
