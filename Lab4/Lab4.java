@@ -8,7 +8,7 @@ import lejos.hardware.Button;
   import lejos.hardware.lcd.TextLCD;
   import lejos.hardware.motor.EV3LargeRegulatedMotor;
   import lejos.hardware.port.Port;
-  import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
   import lejos.hardware.sensor.SensorModes;
   import lejos.robotics.SampleProvider;
 
@@ -40,12 +40,12 @@ import lejos.hardware.Button;
 
     public enum LocalizationType { FALLING_EDGE, RISING_EDGE };
     
+    
+    
     private static final Port usPort = LocalEV3.get().getPort("S1");
-
     @SuppressWarnings("resource") // Because we don't bother to close this resource
     public static SensorModes usSensor = new EV3UltrasonicSensor(usPort); // usSensor is the instance
-    public static SampleProvider usDistance = usSensor.getMode("Distance"); // usDistance provides samples provider from
-    // this instance
+    public static SampleProvider usDistance = usSensor.getMode("Distance"); // usDistance provides samples provider from this instance
     public static float[] usData = new float[usDistance.sampleSize()]; // usData is the buffer in which data is
     // returned in
 
@@ -61,7 +61,7 @@ import lejos.hardware.Button;
       //Parameter used in the method
       int buttonChoice;
       // implementation
-      Display odometryDisplay = new Display(); // No need to change
+      DisplayLab4 odometryDisplay = new DisplayLab4(); // No need to change
 
       
 
@@ -114,20 +114,30 @@ import lejos.hardware.Button;
      // clear the display
         LCD.clear();
         
+        //USLocal USL = new USLocal(LocalizationType.FALLING_EDGE);
         
         UltrasonicLocalizer USL = new UltrasonicLocalizer(LocalizationType.FALLING_EDGE);
         USL.start();
-       
+        
+        Button.waitForAnyPress();
+        
+        LightLocalizer LightLoc = new LightLocalizer();
+        LightLoc.start();
         
       }else if (buttonChoice == Button.ID_RIGHT) {
 
         // clear the display
            LCD.clear();
            
+           //USLocal USL = new USLocal(LocalizationType.RISING_EDGE);
            
            UltrasonicLocalizer USL = new UltrasonicLocalizer(LocalizationType.RISING_EDGE);
            USL.start();
-         
+           
+           Button.waitForAnyPress();
+           
+           LightLocalizer LightLoc = new LightLocalizer();
+           LightLoc.start();
            
          }
 
@@ -138,6 +148,15 @@ import lejos.hardware.Button;
 
     
   }
+
+
+
+
+
+
+
+
+
 
 
 
