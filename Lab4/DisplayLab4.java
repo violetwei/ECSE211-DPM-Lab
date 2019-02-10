@@ -1,7 +1,8 @@
 package ca.mcgill.ecse211.lab4;
 
 
-import lejos.hardware.lcd.TextLCD;
+import static ca.mcgill.ecse211.lab4.Lab4.odometer;
+import static ca.mcgill.ecse211.lab4.Lab4.LCD;
 
 /**
  * This class is used to display information on the EV3 screen
@@ -14,21 +15,12 @@ import lejos.hardware.lcd.TextLCD;
  * @author Violet Wei
  *
  */
-public class Display extends Thread {
+public class DisplayLab4 extends Thread {
   //constants of the class
   private static final long DISPLAY_PERIOD = 750;
-  private Odometer odometer;
-  private TextLCD t;
+  
+  
 
-  /**
-   * Constructor of the class, doesn't take in any arguments
-   * all parameters needed are constants from other classes 
-   * that will be accessed through getter methods
-   */
-  public Display() {
-    this.odometer = Lab4.getOdo();
-    this.t = Lab4.getLCD();
-  }
 
   /**
    *  Run method, entry point of the thread
@@ -40,23 +32,23 @@ public class Display extends Thread {
     double[] position = new double[3];
 
     // clear the display 
-    t.clear();
+    LCD.clear();
 
     //infinite loop, at each iteration, the display is updated
     while (true) {
       displayStart = System.currentTimeMillis(); //kep track of time
 
       // Erases previous info on the screen to make place for the new odometer values
-      t.drawString("X:              ", 0, 0);
-      t.drawString("Y:              ", 0, 1);
-      t.drawString("T:              ", 0, 2);
+      LCD.drawString("X:              ", 0, 0);
+      LCD.drawString("Y:              ", 0, 1);
+      LCD.drawString("T:              ", 0, 2);
 
       // get the odometry information
       odometer.getPosition(position, new boolean[] { true, true, true });
 
       // display odometry information
       for (int i = 0; i < 3; i++) {
-        t.drawString(formattedDoubleToString(position[i], 2), 3, i);
+        LCD.drawString(formattedDoubleToString(position[i], 2), 3, i);
       }
 
       // Make sure it only runs once per thread period
