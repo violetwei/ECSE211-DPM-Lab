@@ -30,11 +30,11 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
         new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
     public static final EV3LargeRegulatedMotor rightMotor =
         new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
-    
+    public static NavigationLab4 Nav = new NavigationLab4();
     public static final TextLCD LCD = LocalEV3.get().getTextLCD();
     public static Odometer odometer = new Odometer();
     public static final double WHEEL_RAD = 2.1;
-    public static final double TRACK = 11.2;
+    public static final double TRACK = 11.1;
     public static final int SPEED = 75;
     public static boolean risingEdge;
 
@@ -95,7 +95,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
         LCD.clear();
         (new Thread() {
           public void run() {
-            TestClass.forward_2_tiles();
+            TestClass.forward2Tiles();
           }
         }).start();
         
@@ -148,14 +148,6 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 
     
   }
-
-
-
-
-
-
-
-
 
 
 
