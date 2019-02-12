@@ -3,10 +3,6 @@ package ca.mcgill.ecse211.lab4;
 /**
  * This class is used to handle errors regarding the singleton pattern used for the odometer and
  * odometerDatapackage ca.mcgill.ecse211.lab4;
-
-/**
- * This class is used to handle errors regarding the singleton pattern used for the odometer and
- * odometerData
  *
  * @author Maxime Bourassa
  * @author Violet Wei
