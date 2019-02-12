@@ -7,7 +7,12 @@ import static ca.mcgill.ecse211.lab4.Lab4.*;
  * It is a combination of both the Odometer and the OdometerData class from lab 2
  * Runs in a thread at a frequency of 13.33 Hz
  *
- * {@value #ODOMETER_PERIOD}  //a constant of the odometer update period in ms
+ * {@value #ODOMETER_PERIOD}  a constant of the odometer update period in ms
+ * {@value #x} x position of the robot
+ * {@value #y} y position of the robot
+ * {@value #theta} angle of the robot with respect to the positive y axis
+ * {@value #leftMotorTachoCount} keeps track of the rotaion of the left motor
+ * {@value #rightMotorTachoCount} keeps track of the rotation of theright motor
  * 
  * @author Rodrigo Silva
  * @author Dirk Dubois
@@ -52,7 +57,7 @@ public class Odometer extends Thread {
     long updateStart, updateEnd;
     int currentTachoL, currentTachoR, lastTachoL, lastTachoR;
     double distL, distR, dDistance, dTheta, dX, dY;
-   
+
     leftMotor.resetTachoCount();
     rightMotor.resetTachoCount();
     lastTachoL=leftMotor.getTachoCount(); // get the tacho count of left motor
@@ -68,13 +73,13 @@ public class Odometer extends Thread {
       distL = Math.PI*WHEEL_RAD*(currentTachoL - lastTachoL)/180;
       distR = Math.PI*WHEEL_RAD*(currentTachoR - lastTachoR)/180;
 
-      lastTachoL=currentTachoL;                             // save the tacho counts for next iteration of the loop
+      lastTachoL=currentTachoL;    // save the tacho counts for next iteration of the loop
       lastTachoR=currentTachoR;
 
-      dDistance = 0.5*(distL+distR);                            // distance traveled by the robot
-      dTheta = (distL-distR)/TRACK*180/Math.PI;                                // compute change in angle of the robot
-      dX = dDistance * Math.sin(theta*Math.PI/180);                     // X component of displacement
-      dY = dDistance * Math.cos(theta*Math.PI/180);                     // Y component of displacement
+      dDistance = 0.5*(distL+distR);    // distance traveled by the robot
+      dTheta = (distL-distR)/TRACK*180/Math.PI;    // compute change in angle of the robot
+      dX = dDistance * Math.sin(theta*Math.PI/180);    // X component of displacement
+      dY = dDistance * Math.cos(theta*Math.PI/180);    // Y component of displacement
       synchronized (lock) {
         //only place these variables are updated (x,y and theta)
         theta = (theta + (360 + dTheta) % (360)) % (360); //keeps the angle within 360 degrees
@@ -123,7 +128,7 @@ public class Odometer extends Thread {
       this.x = x;
     }
   }
-  
+
   /**
    * Setter for Y component lock to be mutually exclusive
    * @param y
@@ -205,7 +210,7 @@ public class Odometer extends Thread {
    * @return X component of the odometer
    */
   public double getX() {
-    
+
     double result;
     synchronized (lock) {
       result = x;
@@ -218,7 +223,7 @@ public class Odometer extends Thread {
    * @return Y component of the odometer
    */
   public double getY() {
-    
+
     double result;
     synchronized (lock) {
       result = y;
@@ -238,5 +243,5 @@ public class Odometer extends Thread {
     }
     return result;
   }
-  
+
 }
