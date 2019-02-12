@@ -1,10 +1,13 @@
 package ca.mcgill.ecse211.lab4;
 
 import static ca.mcgill.ecse211.lab4.Lab4.*;
+
 /** 
  * Class used to keep track of the distance the robot traveled through wheel rotations
  * It is a combination of both the Odometer and the OdometerData class from lab 2
  * Runs in a thread at a frequency of 13.33 Hz
+ *
+ * {@value #ODOMETER_PERIOD}  //a constant of the odometer period in seconds
  * 
  * @author Rodrigo Silva
  * @author Dirk Dubois
@@ -15,6 +18,7 @@ import static ca.mcgill.ecse211.lab4.Lab4.*;
  * @author Violet Wei
  * @author Maxime Bourassa
  */
+
 public class Odometer extends Thread {
   // robot position
   private double x, y, theta;
@@ -25,7 +29,6 @@ public class Odometer extends Thread {
 
   // lock object for mutual exclusion
   private Object lock;
-
 
   /**
    * Constructor of the class 
@@ -49,13 +52,11 @@ public class Odometer extends Thread {
     long updateStart, updateEnd;
     int currentTachoL, currentTachoR, lastTachoL, lastTachoR;
     double distL, distR, dDistance, dTheta, dX, dY;
-    
-    
-    
+   
     leftMotor.resetTachoCount();
     rightMotor.resetTachoCount();
-    lastTachoL=leftMotor.getTachoCount();
-    lastTachoR=rightMotor.getTachoCount();
+    lastTachoL=leftMotor.getTachoCount(); // get the tacho count of left motor
+    lastTachoR=rightMotor.getTachoCount(); // get the tacho count of right motor 
 
     while (true) {
       updateStart = System.currentTimeMillis();
@@ -93,9 +94,6 @@ public class Odometer extends Thread {
     }
   }
 
-
-
-
   /**
    * Method used to set the position of the robot on the odometer
    * @param position
@@ -104,12 +102,15 @@ public class Odometer extends Thread {
   public void setPosition(double[] position, boolean[] update) {
     // ensure that the values don't change while the odometer is running
     synchronized (lock) {
-      if (update[0])
+      if (update[0]) {
         x = position[0];
-      if (update[1])
+      }  
+      if (update[1]) {
         y = position[1];
-      if (update[2])
+      }  
+      if (update[2]) {
         theta = position[2];
+      }  
     }
   }
 
@@ -122,6 +123,7 @@ public class Odometer extends Thread {
       this.x = x;
     }
   }
+  
   /**
    * Setter for Y component lock to be mutually exclusive
    * @param y
@@ -170,8 +172,6 @@ public class Odometer extends Thread {
     return leftMotorTachoCount;
   }
 
-
-
   /**
    * Getter method for the right motor tacho count
    * @return the rightMotorTachoCount
@@ -188,12 +188,15 @@ public class Odometer extends Thread {
   public void getPosition(double[] position, boolean[] update) {
     // ensure that the values don't change while the odometer is running
     synchronized (lock) {
-      if (update[0])
+      if (update[0]) {
         position[0] = x;
-      if (update[1])
+      }  
+      if (update[1]) {
         position[1] = y;
-      if (update[2])
+      }  
+      if (update[2]) {
         position[2] = theta;
+      }  
     }
   }
 
@@ -202,12 +205,11 @@ public class Odometer extends Thread {
    * @return X component of the odometer
    */
   public double getX() {
+    
     double result;
-
     synchronized (lock) {
       result = x;
     }
-
     return result;
   }
 
@@ -216,12 +218,11 @@ public class Odometer extends Thread {
    * @return Y component of the odometer
    */
   public double getY() {
+    
     double result;
-
     synchronized (lock) {
       result = y;
     }
-
     return result;
   }
 
@@ -235,11 +236,7 @@ public class Odometer extends Thread {
     synchronized (lock) {
       result = theta;
     }
-
     return result;
   }
+  
 }
-
-
-
-
