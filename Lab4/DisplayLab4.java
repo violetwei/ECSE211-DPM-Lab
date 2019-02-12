@@ -10,7 +10,7 @@ import static ca.mcgill.ecse211.lab4.Lab4.LCD;
  * This thread runs at 1.33 Hz
  * Based on lab 2 code
  * 
- * {@value #DISPLAY_PERIOD}  // value of the display period in seconds 
+ * {@value #DISPLAY_PERIOD}  // value of the display update period in ms 
  *
  * @author Maxime Bourassa
  * @author Violet Wei
