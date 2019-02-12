@@ -15,12 +15,12 @@ package ca.mcgill.ecse211.lab4;
    * to work (either run the demo or our test programs)
    * It has been slightly modified from the version given in the lab 2 documents to fit this lab
    *
-   * {@value #leftMotor}  // value from the left motor
-   * {@value #rightMotor} // value from the right motor
-   * {@value #WHEEL_RAD}  // value of the wheel's radius
-   * {@value #TRACK}      // value of track
-   * {@value #SPEED}      // moving speed of robot
-   * {@value #usPort}     // value from usPort
+   * {@value #leftMotor}  value from the left motor
+   * {@value #rightMotor} value from the right motor
+   * {@value #WHEEL_RAD}  constant, value of the wheel's radius
+   * {@value #TRACK}      constant, value of track
+   * {@value #SPEED}      constant, moving speed of robot
+   * {@value #usPort}     value from usPort
    * 
    * @author Maxime Bourassa
    * @author Violet Wei
