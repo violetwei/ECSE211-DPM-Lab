@@ -1,167 +1,316 @@
-/* *
- * This class performs the light localization routine, aim to drive the cart to the origin
- * 
- * @author Maxime Bourassa
- * @author Violet Wei
- */
 package ca.mcgill.ecse211.lab4;
 
+import static ca.mcgill.ecse211.lab4.Lab4.leftMotor;
+import static ca.mcgill.ecse211.lab4.Lab4.rightMotor;
+import static ca.mcgill.ecse211.lab4.Lab4.SPEED;
+import static ca.mcgill.ecse211.lab4.Lab4.odometer;
+import static ca.mcgill.ecse211.lab4.Lab4.Nav;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.port.Port;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.SensorMode;
-import lejos.robotics.filter.MedianFilter;
+import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
-public class LightLocalizer extends Thread{
+public class LightLocalizer extends Thread {
 
-  private static final long CORRECTION_PERIOD = 10;
-  private Odometer odometer;
-  private Navigation navigation;
-  private EV3ColorSensor colorSensor;
-  private SampleProvider colorFiltered;
+  public static final Port colorSampler = LocalEV3.get().getPort("S2");
+  public SensorModes colosSamplerSensor = new EV3ColorSensor(colorSampler);
+  public SampleProvider colorSensorValue = colosSamplerSensor.getMode("Red");
+  public float[] colorSensorData = new float[colosSamplerSensor.sampleSize()];
+  private float oldValue = 0;
+  private static final double DISTANCE_FROM_CENTER = 6.5;
+  long correctionStart, correctionEnd;
+  private int DIFF_THREASHOLD = -25;
 
-  private static final int THRESHOLD = 25;
-  private static final int MIN_DATA_THRESHOLD = 5;
-  private static final double DISTANCE_FROM_CENTER = 9.6;
-
-  private int lastBeepCounter = 0; // Holds the counter that counts iterations since last beep
-
-  // constructor
-  public LightLocalizer(Odometer odometer, Navigation navigation) {
-    this.odometer = odometer;
-    this.navigation = navigation;
-
-    Port colorPort = LocalEV3.get().getPort("S1");
-    colorSensor = new EV3ColorSensor(colorPort);
-    SampleProvider colorAmbient = colorSensor.getMode(1); // Ambient mode to get light intensity
-    colorFiltered = new MedianFilter(colorAmbient, 5); // Use median filter to remove noise
-  }
-
+  private static final long CORRECTION_PERIOD = 50;
   public void run() {
-    long correctionStart, correctionEnd;
-    double thetaX1 = 0, thetaX2 = 0, thetaY1 = 0, thetaY2 = 0;
+    boolean firsttime = true;
 
-    navigation.travelTo(0, 0); // Move towards the origin
 
-    while (navigation.isNavigating()) { // While robot is turning
+
+    Nav.setSpeeds(SPEED);
+    Nav.turnTo(45);
+
+    leftMotor.forward();
+    rightMotor.forward();
+
+
+
+
+
+    while (true) {
       correctionStart = System.currentTimeMillis();
 
-      if (lineDetected()) { // If a line is detected, stop moving
-        navigation.stopBothMotors();
-        Sound.setVolume(60);
+      //fetching the values from the color sensor
+      colorSensorValue.fetchSample(colorSensorData, 0);
+
+      //getting the value returned from the sensor, and multiply it by 1000 to scale
+      float value = colorSensorData[0]*1000;
+
+      //computing the derivative at each point
+      float diff = value - oldValue;
+
+      //storing the current value, to be able to get the derivative on the next iteration
+      oldValue = value;
+
+      //if the derivative value at a given point is less than -50, this means that a black line is detected
+      if(diff < DIFF_THREASHOLD) {
+
+        //robot beeps
         Sound.beep();
-        break;
+
+        leftMotor.stop(true);
+        rightMotor.stop(true);
+
+        if(firsttime) {
+          Nav.setSpeeds(SPEED);
+          leftMotor.rotate(Nav.convertDistance(DISTANCE_FROM_CENTER),true);
+          rightMotor.rotate(Nav.convertDistance(DISTANCE_FROM_CENTER),false);
+          firsttime = false;
+
+
+          precorrect();
+          break;
+        }
+
+
+
       }
 
-      // this ensure the detection occurs only once every period
+
+
+
       correctionEnd = System.currentTimeMillis();
       if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
         try {
           Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
         } catch (InterruptedException e) {
+          // there is nothing to be done here because it is not
+          // expected that the odometry correction will be
+          // interrupted by another thread
         }
       }
     }
 
-    navigation.travelTo((odometer.getX() - DISTANCE_FROM_CENTER) / Lab4.SQUARE_LENGTH,
-        (odometer.getY() - DISTANCE_FROM_CENTER) / Lab4.SQUARE_LENGTH); // Return towards origin
+  }
 
-    while (navigation.isNavigating()) {
-      // Wait until we are at the origin
-    }
+  private void precorrect() {
 
-    navigation.turnTo(-odometer.getTheta(), false, true); // Turn back to 0 degrees
-
-    navigation.turnTo(360, true, false); // Perform a full 360 degree turn, returning before completion
-
-    while (navigation.isNavigating()) { // While robot is turning
+    Nav.turnTo(-120);
+    leftMotor.backward();
+    rightMotor.forward();
+    while(true) {
       correctionStart = System.currentTimeMillis();
+      //fetching the values from the color sensor
+      colorSensorValue.fetchSample(colorSensorData, 0);
 
-      int numberOfLinesDetected = 0;
+      //getting the value returned from the sensor, and multiply it by 1000 to scale
+      float value = colorSensorData[0]*1000;
 
-      if (lineDetected()) { // If a line is detected
-        numberOfLinesDetected++;
-        double currentTheta = odometer.getTheta();
+      //computing the derivative at each point
+      float diff = value - oldValue;
 
-        switch (numberOfLinesDetected) { // Set theta depending on which line is detected
-          case 1:
-            thetaX1 = currentTheta;
-            break;
-          case 2:
-            thetaY1 = currentTheta;
-            break;
-          case 3:
-            thetaX2 = currentTheta;
-            break;
-          case 4:
-            thetaY2 = currentTheta;
-            break;
-          default:
-            break;
+      //storing the current value, to be able to get the derivative on the next iteration
+      oldValue = value;
+
+
+      //if the derivative value at a given point is less than -50, this means that a black line is detected
+      if(diff < DIFF_THREASHOLD) {
+
+        //robot beeps
+        Sound.beep();
+
+        leftMotor.stop(true);
+        rightMotor.stop(true);
+
+        if (odometer.getTheta() < 285 && odometer.getTheta() > 195) {
+
+          correctX();
+          break;
+
+        } else if (odometer.getTheta() > 165) {
+
+
+
+          correctY();
+          break;
+
         }
+      }
+      correctionEnd = System.currentTimeMillis();
+      if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
+        try {
+          Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
+        } catch (InterruptedException e) {
+          // there is nothing to be done here because it is not
+          // expected that the odometry correction will be
+          // interrupted by another thread
+        }
+      }
 
-        // this ensure the detection occurs only once every period
-        correctionEnd = System.currentTimeMillis();
-        if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
+    }
+  }
+
+  private void correctX() {
+
+    boolean firsttime = true;
+    boolean secondtime = false;
+    double distanceCorr = 0;
+    leftMotor.forward();
+    rightMotor.backward();
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // there is nothing to be done here because it is not
+      // expected that the odometry correction will be
+      // interrupted by another thread
+    }
+    while(true) {
+      correctionStart = System.currentTimeMillis();
+      //fetching the values from the color sensor
+      colorSensorValue.fetchSample(colorSensorData, 0);
+
+      //getting the value returned from the sensor, and multiply it by 1000 to scale
+      float value = colorSensorData[0]*1000;
+
+      //computing the derivative at each point
+      float diff = value - oldValue;
+
+      //storing the current value, to be able to get the derivative on the next iteration
+      oldValue = value;
+
+
+      //if the derivative value at a given point is less than -50, this means that a black line is detected
+      if(diff < DIFF_THREASHOLD) {
+
+        if(firsttime) {
+          //robot beeps
+          Sound.beep();
+
+          distanceCorr = Math.sin(odometer.getTheta()*Math.PI/180)*DISTANCE_FROM_CENTER;
+
+          leftMotor.forward();
+          rightMotor.backward();
+
+          firsttime = false;
+          secondtime = true;
           try {
-            Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
+            Thread.sleep(1000);
           } catch (InterruptedException e) {
+            // there is nothing to be done here because it is not
+            // expected that the odometry correction will be
+            // interrupted by another thread
           }
+
+        } else if(secondtime) {
+          Sound.beep();
+          leftMotor.stop(true);
+          rightMotor.stop(true);
+          leftMotor.forward();
+          rightMotor.forward();
+          leftMotor.rotate(Nav.convertDistance(distanceCorr),true);
+          rightMotor.rotate(Nav.convertDistance(distanceCorr),false);
+          leftMotor.backward();
+          rightMotor.forward();
+          secondtime = false;
+
+
+
+        } else {
+
+          Nav.turnTo(-90-3);
+          leftMotor.stop(true);
+          rightMotor.stop(true);
+          odometer.setPosition(new double [] {0.0, 0.0, 0}, new boolean [] {true, true, true});
+          break;
+        }
+
+      }
+      correctionEnd = System.currentTimeMillis();
+      if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
+        try {
+          Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
+        } catch (InterruptedException e) {
+          // there is nothing to be done here because it is not
+          // expected that the odometry correction will be
+          // interrupted by another thread
         }
       }
     }
 
-    // Calculate the new theta x and theta y once robot is done turning
-    double newThetaX = (thetaX2 - thetaX1) / 2;
-    double newThetaY = (thetaY2 - thetaY1) / 2;
-
-    // Calculate the x and y positions
-    double X = Math.cos(newThetaY);
-    double Y = Math.cos(newThetaX);
-
-    // Set new X and Y positions
-    odometer.setX(X);
-    odometer.setY(Y);
-
-    navigation.travelTo(0, 0); // Travel to origin
-
-    while (navigation.isNavigating()) {
-      // Wait until robot is at the point
-    }
-
-    navigation.turnTo(-odometer.getTheta(), true, true); // Turn to 0 degrees
   }
 
-  private boolean lineDetected() { // Returns true if a black line is detected
-    float[] colorData = new float[colorFiltered.sampleSize()];
-    colorFiltered.fetchSample(colorData, 0); // Get data from sensor
 
-    while ((colorData[0] * 100) < MIN_DATA_THRESHOLD) { // Ensure that the sensor is getting usable data
-      try {
-        Thread.sleep(50);
-      } catch (InterruptedException e) {
-      }
-
-      colorFiltered.fetchSample(colorData, 0);
+  private void correctY() {
+    boolean firsttime = true;
+    boolean secondtime = false;
+    double distanceCorr = 0;
+    leftMotor.backward();
+    rightMotor.forward();
+    odometer.setTheta(180);
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // there is nothing to be done here because it is not
+      // expected that the odometry correction will be
+      // interrupted by another thread
     }
 
-    if (lastBeepCounter == 0) { // Ensures that last line detect was enough time ago
-      if ((colorData[0] * 100) < THRESHOLD) { // If data is less than threshold, line detected
-        Sound.setVolume(70);
-        Sound.beep(); // Beep
+    while(true) {
+      correctionStart = System.currentTimeMillis();
+      //fetching the values from the color sensor
+      colorSensorValue.fetchSample(colorSensorData, 0);
 
-        lastBeepCounter = 20; // Reset beep counter
+      //getting the value returned from the sensor, and multiply it by 1000 to scale
+      float value = colorSensorData[0]*1000;
 
-        return true;
+      //computing the derivative at each point
+      float diff = value - oldValue;
+
+      //storing the current value, to be able to get the derivative on the next iteration
+      oldValue = value;
+
+
+      //if the derivative value at a given point is less than -50, this means that a black line is detected
+      if(diff < DIFF_THREASHOLD) {
+
+        if(firsttime) {
+          //robot beeps
+          Sound.beep();
+
+          distanceCorr = Math.cos(odometer.getTheta()*Math.PI/180)*DISTANCE_FROM_CENTER;
+
+          firsttime = false;
+          secondtime = true;
+          try {
+            Thread.sleep(1000);
+          } catch (Exception e) {
+          } // Poor man's timed sampling
+
+        } else if(secondtime) {
+
+          Sound.beep();
+          leftMotor.stop(true);
+          rightMotor.stop(true);
+          leftMotor.forward();
+          rightMotor.forward();
+          leftMotor.rotate(Nav.convertDistance(distanceCorr),true);
+          rightMotor.rotate(Nav.convertDistance(distanceCorr),false);
+          odometer.setPosition(new double [] {0.0, 0.0, 0}, new boolean [] {true, true, true});
+          break;
+        }
       }
-    } else {
-      lastBeepCounter--; // Otherwise, lower the beep counter
-    }
-
-    return false;
+      correctionEnd = System.currentTimeMillis();
+      if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
+        try {
+          Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
+        } catch (InterruptedException e) {
+          // there is nothing to be done here because it is not
+          // expected that the odometry correction will be
+          // interrupted by another thread
+        }
+      }
+    }   
   }
-
 }
