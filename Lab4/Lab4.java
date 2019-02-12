@@ -109,8 +109,7 @@ package ca.mcgill.ecse211.lab4;
             TestClass.forward2Tiles();
           }
         }).start();
-      } 
-      else if (buttonChoice == Button.ID_DOWN) {
+      } else if (buttonChoice == Button.ID_DOWN) {
         //testing the rotation
         LCD.clear();
         (new Thread() {
@@ -118,8 +117,7 @@ package ca.mcgill.ecse211.lab4;
             TestClass.rotate360();
           }
         }).start(); //starts the thread
-      } 
-      else if (buttonChoice == Button.ID_LEFT) {
+      } else if (buttonChoice == Button.ID_LEFT) {
 
      // clear the display
         LCD.clear();
@@ -132,7 +130,7 @@ package ca.mcgill.ecse211.lab4;
         LightLocalizer LightLoc = new LightLocalizer();
         LightLoc.start();
     
-      }else if (buttonChoice == Button.ID_RIGHT) {
+      } else if (buttonChoice == Button.ID_RIGHT) {
 
            // clear the display
            LCD.clear();
