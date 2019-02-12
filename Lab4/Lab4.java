@@ -46,16 +46,7 @@ package ca.mcgill.ecse211.lab4;
      * <li>{@link #FALLING_EDGE}</li>
      * <li>{@link #RISING_EDGE}</li>     
      */
-    public enum LocalizationType { 
-      /**
-       * FALLING_EDGE type
-       */      
-      FALLING_EDGE, 
-      /**
-       * RISING_EDGE type
-       */      
-      RISING_EDGE 
-    };
+    public enum LocalizationType { FALLING_EDGE, RISING_EDGE };
     
     private static final Port usPort = LocalEV3.get().getPort("S1");
     @SuppressWarnings("resource") // Because we don't bother to close this resource
