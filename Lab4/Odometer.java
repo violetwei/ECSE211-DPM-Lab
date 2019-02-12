@@ -7,7 +7,7 @@ import static ca.mcgill.ecse211.lab4.Lab4.*;
  * It is a combination of both the Odometer and the OdometerData class from lab 2
  * Runs in a thread at a frequency of 13.33 Hz
  *
- * {@value #ODOMETER_PERIOD}  //a constant of the odometer period in seconds
+ * {@value #ODOMETER_PERIOD}  //a constant of the odometer update period in ms
  * 
  * @author Rodrigo Silva
  * @author Dirk Dubois
