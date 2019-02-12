@@ -1,14 +1,11 @@
 package ca.mcgill.ecse211.lab4;
 
-
-
-  
-import lejos.hardware.Button;
+  import lejos.hardware.Button;
   import lejos.hardware.ev3.LocalEV3;
   import lejos.hardware.lcd.TextLCD;
   import lejos.hardware.motor.EV3LargeRegulatedMotor;
   import lejos.hardware.port.Port;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
+  import lejos.hardware.sensor.EV3UltrasonicSensor;
   import lejos.hardware.sensor.SensorModes;
   import lejos.robotics.SampleProvider;
 
@@ -17,6 +14,13 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
    * and it allows the user to select different options on how they want the run 
    * to work (either run the demo or our test programs)
    * It has been slightly modified from the version given in the lab 2 documents to fit this lab
+   *
+   * {@value #leftMotor}
+   * {@value #rightMotor}
+   * {@value #WHEEL_RAD}
+   * {@value #TRACK}
+   * {@value #SPEED}
+   * {@value #usPort}
    * 
    * @author Maxime Bourassa
    * @author Violet Wei
@@ -36,18 +40,15 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
     public static final double WHEEL_RAD = 2.1;
     public static final double TRACK = 11.1;
     public static final int SPEED = 75;
-    public static boolean risingEdge;
 
     public enum LocalizationType { FALLING_EDGE, RISING_EDGE };
-    
-    
     
     private static final Port usPort = LocalEV3.get().getPort("S1");
     @SuppressWarnings("resource") // Because we don't bother to close this resource
     public static SensorModes usSensor = new EV3UltrasonicSensor(usPort); // usSensor is the instance
     public static SampleProvider usDistance = usSensor.getMode("Distance"); // usDistance provides samples provider from this instance
     public static float[] usData = new float[usDistance.sampleSize()]; // usData is the buffer in which data is
-    // returned in
+                                                                       // returned in
 
     /**
      * Main entry of the program. Starts the run and lets the user select between
@@ -62,10 +63,6 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
       int buttonChoice;
       // implementation
       DisplayLab4 odometryDisplay = new DisplayLab4(); // No need to change
-
-      
-
-
 
       do {
         // clear the display
@@ -98,10 +95,9 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
             TestClass.forward2Tiles();
           }
         }).start();
-        
-       
-
-      } else if (buttonChoice == Button.ID_DOWN) {
+      } 
+      
+      else if (buttonChoice == Button.ID_DOWN) {
         //testing the rotation
         LCD.clear();
         (new Thread() {
@@ -109,12 +105,11 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
             TestClass.rotate360();
           }
         }).start(); //starts the thread
-      } else if (buttonChoice == Button.ID_LEFT) {
+      } 
+      else if (buttonChoice == Button.ID_LEFT) {
 
      // clear the display
         LCD.clear();
-        
-        //USLocal USL = new USLocal(LocalizationType.FALLING_EDGE);
         
         UltrasonicLocalizer USL = new UltrasonicLocalizer(LocalizationType.FALLING_EDGE);
         USL.start();
@@ -129,8 +124,6 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
         // clear the display
            LCD.clear();
            
-           //USLocal USL = new USLocal(LocalizationType.RISING_EDGE);
-           
            UltrasonicLocalizer USL = new UltrasonicLocalizer(LocalizationType.RISING_EDGE);
            USL.start();
            
@@ -140,12 +133,9 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
            LightLoc.start();
            
          }
-
-
       while (Button.waitForAnyPress() != Button.ID_ESCAPE); //to end program
       System.exit(0);
     }
-
     
   }
 
