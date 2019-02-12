@@ -40,8 +40,22 @@ package ca.mcgill.ecse211.lab4;
     public static final double WHEEL_RAD = 2.1;
     public static final double TRACK = 11.1;
     public static final int SPEED = 75;
-
-    public enum LocalizationType { FALLING_EDGE, RISING_EDGE };
+    
+    /**
+     * Localization type that can be used
+     * <li>{@link #FALLING_EDGE}</li>
+     * <li>{@link #RISING_EDGE}</li>     
+     */
+    public enum LocalizationType { 
+      /**
+       * FALLING_EDGE type
+       */      
+      FALLING_EDGE, 
+      /**
+       * RISING_EDGE type
+       */      
+      RISING_EDGE 
+    };
     
     private static final Port usPort = LocalEV3.get().getPort("S1");
     @SuppressWarnings("resource") // Because we don't bother to close this resource
