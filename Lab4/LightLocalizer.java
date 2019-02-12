@@ -153,6 +153,7 @@ public class LightLocalizer extends Thread {
    * Uses a differential filter to spot lines
    */
   private void correctX() {
+    //keeps track of the number of lines passed while in this method
     int numlines = 0;
     double distanceCorr = 0;
     leftMotor.forward();
