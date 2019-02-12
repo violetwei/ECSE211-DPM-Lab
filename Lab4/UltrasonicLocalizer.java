@@ -10,7 +10,7 @@ import lejos.hardware.Sound;
  * At the end of this part, the robot should be facing almost zero degrees.
  * It runs in a thread
  * 
-  * {@value #MAX_DISTANCE} Constant. Maximum distance used to detect when there is no wall in the filter for the falling edge type
+ * {@value #MAX_DISTANCE} Constant. Maximum distance used to detect when there is no wall in the filter for the falling edge type
  * {@value #SMALL_DISTANCE} Constant. Used in the filter for the rising edge type, helps to remove false negatives better than a higher value
  * {@value #WALL_DISTANCE} Constant. Value under which the robot is assumed to be facing a wall
  * {@value #MARGIN_DIsTANCE} Constant. Value used to remove noise when detecting the edge of the wall
@@ -60,7 +60,7 @@ public class UltrasonicLocalizer extends Thread {
     //Second angle at the end of the noise margin
     double secondangle2 = 0;
     //If falling edge has been selected, continue
-    if(locType == LocalizationType.FALLING_EDGE) {
+    if (locType == LocalizationType.FALLING_EDGE) {
       //Calls our navigation method to set
       Nav.setSpeeds(SPEED);
       //if the robot starts facing a wall, turn until there is no longer a wall
@@ -90,7 +90,7 @@ public class UltrasonicLocalizer extends Thread {
       //Make a sound. Helps for debugging
       Sound.beep();
       //If we recorded an angle in the noise margin, continue
-      if(firstangle2!=0) {
+      if (firstangle2!=0) {
         //Average the values to eliminate noise
         firstangle = (firstangle+firstangle2)/2.0;
         //We passed through the loop without seeing anything. Happens very rarely but better be safe than sorry
@@ -113,13 +113,13 @@ public class UltrasonicLocalizer extends Thread {
           noiseZone = true;
         } else if ( getFilter(MAX_DISTANCE) >= WALL_DISTANCE - MARGIN_DISTANCE && noiseZone) {
           secondangle2 = odometer.getTheta();
-        }else if(noiseZone) {
+        } else if(noiseZone) {
           noiseZone = false;
           break;
         }
       }
       Sound.beep();
-      if(secondangle2!=0) {
+      if (secondangle2!=0) {
         secondangle = (secondangle+secondangle2)/2.0;
       } else if(secondangle == 0) {
         secondangle = odometer.getTheta();
@@ -128,7 +128,7 @@ public class UltrasonicLocalizer extends Thread {
       Nav.stopMotors();
       //If the second angle is bigger than the first, subtract a full turn so the average of the first and
       //second angle is 45 degrees
-      if(secondangle > firstangle) {
+      if (secondangle > firstangle) {
         secondangle -= 360;
       }
       //Average the angle to get the angle we need to turn to face 45 degrees
@@ -187,24 +187,24 @@ public class UltrasonicLocalizer extends Thread {
         if (!noiseZone && getFilter(SMALL_DISTANCE) >= WALL_DISTANCE - MARGIN_DISTANCE) {
           secondangle = odometer.getTheta();
           noiseZone = true;
-        } else if ( getFilter(SMALL_DISTANCE) <= WALL_DISTANCE + MARGIN_DISTANCE && noiseZone){
+        } else if ( getFilter(SMALL_DISTANCE) <= WALL_DISTANCE + MARGIN_DISTANCE && noiseZone) {
           secondangle2 = odometer.getTheta();
-        }else if(noiseZone) {
+        } else if(noiseZone) {
           noiseZone = false;
           break;
         }
       }
       Sound.beep();
-      if(secondangle2!=0) {
+      if (secondangle2!=0) {
         secondangle = (secondangle+secondangle2)/2.0;
-      } else if(secondangle == 0) {
+      } else if (secondangle == 0) {
         secondangle = odometer.getTheta();
       }
       //stop both motors
       Nav.stopMotors();
       //If the first angle is bigger, wrap it around so the average 
       //of both angle is 45 degrees
-      if(firstangle > secondangle) {
+      if (firstangle > secondangle) {
         firstangle -= 360;
       }
       //calculate the average angle
@@ -236,7 +236,7 @@ public class UltrasonicLocalizer extends Thread {
       //will return the previous value instead
       result = lastDistance;
       //true large value, return it
-    } else if (distance > max_dist){
+    } else if (distance > max_dist) {
       result = max_dist; //clips it at 50
       //its a small value, reset the filter and return it
     } else {
@@ -249,5 +249,3 @@ public class UltrasonicLocalizer extends Thread {
   }
 
 }
-
-
