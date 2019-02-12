@@ -92,8 +92,8 @@ package ca.mcgill.ecse211.lab4;
         LCD.drawString(" to test rotation    ", 0, 6);
 
         buttonChoice = Button.waitForAnyPress(); //wait for the user
-      } while (buttonChoice != Button.ID_ENTER && buttonChoice != Button.ID_DOWN && buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT); //Exit when a valid option has been selected
-
+      } 
+      while (buttonChoice != Button.ID_ENTER && buttonChoice != Button.ID_DOWN && buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT); //Exit when a valid option has been selected
 
       // Start odometer and display threads
       Thread odoThread = new Thread(odometer);
@@ -110,7 +110,6 @@ package ca.mcgill.ecse211.lab4;
           }
         }).start();
       } 
-      
       else if (buttonChoice == Button.ID_DOWN) {
         //testing the rotation
         LCD.clear();
@@ -132,10 +131,10 @@ package ca.mcgill.ecse211.lab4;
         
         LightLocalizer LightLoc = new LightLocalizer();
         LightLoc.start();
-        
+    
       }else if (buttonChoice == Button.ID_RIGHT) {
 
-        // clear the display
+           // clear the display
            LCD.clear();
            
            UltrasonicLocalizer USL = new UltrasonicLocalizer(LocalizationType.RISING_EDGE);
@@ -144,14 +143,13 @@ package ca.mcgill.ecse211.lab4;
            Button.waitForAnyPress();
            
            LightLocalizer LightLoc = new LightLocalizer();
-           LightLoc.start();
-           
-         }
+           LightLoc.start();  
+      }
       while (Button.waitForAnyPress() != Button.ID_ESCAPE); //to end program
       System.exit(0);
-    }
+   }
     
-  }
+}
 
 
 
