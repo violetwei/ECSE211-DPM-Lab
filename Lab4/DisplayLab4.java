@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.lab4;
 
+
 import static ca.mcgill.ecse211.lab4.Lab4.odometer;
 import static ca.mcgill.ecse211.lab4.Lab4.LCD;
 
@@ -10,24 +11,22 @@ import static ca.mcgill.ecse211.lab4.Lab4.LCD;
  * This thread runs at 1.33 Hz
  * Based on lab 2 code
  * 
- * {@value #DISPLAY_PERIOD}  // value of the display update period in ms 
- *
  * @author Maxime Bourassa
  * @author Violet Wei
  *
  */
-
 public class DisplayLab4 extends Thread {
-  
   //constants of the class
   private static final long DISPLAY_PERIOD = 750;
-  
+
+
+
+
   /**
    *  Run method, entry point of the thread
    *  All the updates for the display will be done here
    */
   public void run() {
-    
     //parameters
     long displayStart, displayEnd;
     double[] position = new double[3];
@@ -37,7 +36,7 @@ public class DisplayLab4 extends Thread {
 
     //infinite loop, at each iteration, the display is updated
     while (true) {
-      displayStart = System.currentTimeMillis(); //keep track of time
+      displayStart = System.currentTimeMillis(); //kep track of time
 
       // Erases previous info on the screen to make place for the new odometer values
       LCD.drawString("X:              ", 0, 0);
@@ -78,22 +77,22 @@ public class DisplayLab4 extends Thread {
     long t;
 
     // put in a minus sign as needed
-    if (x < 0.0) {
+    if (x < 0.0)
       result += "-";
-    }  
 
     // put in a leading 0
-    if (-1.0 < x && x < 1.0) {
+    if (-1.0 < x && x < 1.0)
       result += "0";
-    } else {
+    else {
       t = (long)x;
-      if (t < 0) {
+      if (t < 0)
         t = -t;
-      }  
+
       while (t > 0) {
         stack = Long.toString(t % 10) + stack;
         t /= 10;
       }
+
       result += stack;
     }
 
@@ -109,6 +108,7 @@ public class DisplayLab4 extends Thread {
         result += Long.toString((long)x);
       }
     }
+
     return result;
   }
 
